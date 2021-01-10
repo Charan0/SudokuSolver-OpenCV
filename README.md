@@ -130,8 +130,19 @@ In a similar way we extract digits from each of the boxes and reject(Fill with 0
 
 # C) Solving the identified sudoku puzzle.
 
-#### I have used a simple bactracking based approach which is a modified implementation of what I found at <a href="https://www.youtube.com/watch?v=G_UYXzGuqvM">Computerphile's Solving a Sudoku using recursion</a>
+### Unsolved Grid (Identified Grid)
 
-
+<img src='Samples/Identified-grid.PNG'>
 
 #### I've used numpy's ndarray for storing and solving the sudoku puzzle as shown above.
+
+#### I have used a simple bactracking based approach which is a modified implementation of what I found at <a href="https://www.youtube.com/watch?v=G_UYXzGuqvM">Computerphile's Solving a Sudoku using recursion</a>
+
+<img src='Samples/Solved-grid.PNG'>
+
+# D) Projecting the solution back on to the original input frame.
+
+##### Since we already have the locations of each of the box in the grid and also the identified grid (which I used as a mask to determine which positions contain an image) we can just use OpenCV's `putText()` method and put the solution onto the localized sudoku image and using inverse_warp we can stitch this back onto the original input image.
+
+## The Solved image
+<img src='Samples/Solved.png'>
