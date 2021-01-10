@@ -8,11 +8,11 @@ class Solver:
 
     def solve(self):
         if self.is_solvable():
-            print('IS SOLVABLE')
+            print('Solvable!')
             self.__solve_helper()
             return self.puzzle
         else:
-            print('NOT SOLVABLE')
+            print('Not Solvable')
             return None
 
     def __solve_helper(self):
@@ -95,22 +95,3 @@ class Solver:
                 if self.__has_duplicates(block):
                     return False
         return True
-
-
-# A sample run of the sudoku solver
-if __name__ == '__main__':
-    sudoku = np.array([
-        [4, 0, 1, 2, 9, 0, 0, 7, 5],
-        [2, 0, 0, 3, 0, 0, 8, 0, 0],
-        [0, 7, 0, 0, 8, 0, 0, 0, 6],
-        [0, 0, 0, 1, 0, 3, 0, 6, 2],
-        [1, 0, 5, 0, 0, 0, 4, 0, 3],
-        [7, 3, 0, 6, 0, 8, 0, 0, 0],
-        [6, 0, 0, 0, 2, 0, 0, 3, 0],
-        [0, 0, 7, 0, 0, 1, 0, 0, 4],
-        [8, 9, 0, 0, 6, 5, 1, 0, 7]
-    ])
-
-    solver = Solver(sudoku)
-    solved_sudoku = solver.solve()
-    print(solved_sudoku)

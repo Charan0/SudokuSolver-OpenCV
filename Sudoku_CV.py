@@ -257,7 +257,7 @@ def locate_and_predict(warped_image: np.ndarray):
                 # Making the prediction
                 grid[i, j] = make_prediction(preprocessed)  # BottleNeck for performance (Too Slow?)
                 count += 1
-    print(f'Identified a total of {count} digits in the sudoku grid')
+    # print(f'Identified a total of {count} digits in the sudoku grid')
     return locations, dst, grid
 
 
@@ -275,14 +275,17 @@ def write_on_image(image: np.ndarray, locations: List, strings: np.ndarray, mask
     offset_x = 5
     offset_y = 5
 
+    if not np.issubdtype(mask.dtype, bool):
+        mask = mask.astype('bool')
+
     mask = mask.flatten()  # Boolean nd-array
-    strings = strings.flatten()
+    strings = strings.astype('int').flatten()
 
     font = cv2.FONT_HERSHEY_COMPLEX  # The font-face being used
     height, width, _ = image.shape
     factor = min(height / width, width / height)  # Factor to be multiplied by the base size of the font
 
-    font_scale = 1.05 * factor
+    font_scale = 0.95 * factor
 
     for (_, x), (y, _) in locations:  # Coordinates of the bottom left corner of the box
         if not mask[index]:  # If the box in empty in the 'Unsolved' Sudoku
