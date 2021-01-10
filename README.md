@@ -166,6 +166,7 @@ In a similar way we extract digits from each of the boxes and reject(Fill with 0
 
 # Additional references and resources used : 
 
+### A subset of <a href="http://www.ee.surrey.ac.uk/CVSSP/demos/chars74k/">Chars74k Dataset</a> is used for training the CNN.
 ### <a href="https://stackoverflow.com/questions/63583351/how-getperspectivetransform-and-warpperspective-work-python">How <code>warpPerspective()</code> works?</a>
 ### <a href="https://www.youtube.com/watch?v=hMIrQdX4BkE">What are connected components and how to extract them.</a>
 ### <a href="https://stackoverflow.com/questions/52737584/contour-identification-using-opencv">How contours are identified and extracted.</a>
