@@ -37,7 +37,7 @@ The image shown, which I found on reddit (A meme called accidental swastika :joy
   <img src='Samples/Morphed.png' width=450 height=550">
 </p>
 <p align="middle">
-This is the image obtained after applying some morphological transformations using `morph_image()`. Specifically for this task I have first converted the image from color to black and white and then performed Gaussian Blur to smooth the image and then applied a threshold operation. The end result of these operations is as shown in the above sample.
+This is the image obtained after applying some morphological transformations using <code>morph_image()</code>. Specifically for this task I have first converted the image from color to black and white and then performed Gaussian Blur to smooth the image and then applied a threshold operation. The end result of these operations is as shown in the above sample.
 </p>
 </div>
                  
@@ -49,7 +49,7 @@ This is the image obtained after applying some morphological transformations usi
   <img src='Samples/All-Contours.png' width=450 height=550">
 </p>
 <p align="middle">
-We then find out all the contours in the image using OpenCV's `findContours()` method. The above image shows all the identified contours in the image. Next we need to extract the region of image that contains the largest contour area.
+We then find out all the contours in the image using OpenCV's <code>findContours()</code> method. The above image shows all the identified contours in the image. Next we need to extract the region of image that contains the largest contour area.
 </p>
 </div>
                  
@@ -79,6 +79,6 @@ Now that we have found the contour enclosing the sudoku puzzle, the next task is
   <img src='Samples/LocalizedSudoku(WarpPerspective).png'>
 </p>
 <p align="middle">
-Now that we have the points that enclose this contour we use OpenCV's `getPerspectiveTransform()` `warpPerspective()` to warp and isolate the sudoku grid from rest of the image.
+Now that we have the points that enclose this contour we use OpenCV's <code>getPerspectiveTransform()</code> <code>warpPerspective()</code> to warp and isolate the sudoku grid from rest of the image.
 </p>
 </div>
