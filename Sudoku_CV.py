@@ -89,8 +89,8 @@ def find_corners(outline: np.ndarray, image: np.ndarray = None, show_result: boo
 def are_right_angled(corners: np.ndarray, tolerance=1e-4, rel_tol=1e-8):
     """
     :param corners: Set of points
-    :param tolerance: The tolerance/limit used as atol to numpy's allclose method
-    :param rel_tol: The tolerance/limit used as rtol to numpy's allclose method
+    :param tolerance: The tolerance/limit used as atol to numpy allclose method
+    :param rel_tol: The tolerance/limit used as rtol to numpy allclose method
     :return: Returns a boolean stating whether or not the angles are nearly 90 degrees wrt each other or not
     """
     # I ran a loop instead of duplicating the code, hence it needed to circle over
@@ -201,13 +201,13 @@ def extract_digit(src: np.ndarray):
     return np.pad(dst, 2)
 
 
-def preprocess(digit_image: np.ndarray, dsize: int = 40):
+def preprocess(digit_image: np.ndarray, size: int = 40):
     src = digit_image.astype('uint8')  # ConnectedComponents expects the image to be of unsigned integer
     extracted = extract_digit(src).astype('uint8')  # Ignoring noise and extracting only the digit from the box
 
     dst = centralize(extracted)  # Centralizing the digit in the box
     _, dst = cv2.threshold(dst, 160, 255, cv2.THRESH_BINARY_INV)  # Making it a binary image
-    dst = cv2.resize(dst, (dsize, dsize), interpolation=cv2.INTER_AREA)
+    dst = cv2.resize(dst, (size, size), interpolation=cv2.INTER_AREA)
     dst = dst / 255.  # Image pixel values now lie in [0, 1.]
 
     return dst
@@ -231,7 +231,7 @@ def make_prediction(image: np.ndarray):
 
 def locate_and_predict(warped_image: np.ndarray):
     if warped_image.ndim == 3:
-        dst = morph_image(warped_image)  # Morphing the image if the input received is 3-Channeled(BGR most prolly)
+        dst = morph_image(warped_image)  # Morphing the image if the input received is 3-Channeled(BGR most probably)
     else:
         dst = warped_image.copy()  # We do not want modify the original image in anyway
 
@@ -255,7 +255,7 @@ def locate_and_predict(warped_image: np.ndarray):
                 # Preprocessing and then predicting the digit in the image
                 preprocessed = preprocess(roi, 40)  # Preprocessing the image => Resizing and Centralizing
                 # Making the prediction
-                # grid[i, j] = make_prediction(preprocessed)  # BottleNeck for performance (Too Slow?)
+                grid[i, j] = make_prediction(preprocessed)  # BottleNeck for performance (Too Slow?)
                 count += 1
     print(f'Identified a total of {count} digits in the sudoku grid')
     return locations, dst, grid

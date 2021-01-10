@@ -65,7 +65,7 @@ class Solver:
         return True  # Value can be put in that location
 
     @staticmethod
-    def __has_duplicacy(series: np.ndarray):
+    def __has_duplicates(series: np.ndarray):
         series = np.ravel(series)  # Flatten the array
         values, counts = np.unique(series, return_counts=True)  # Finding the unique elements and their counts
         # If more than one duplicate(0 can be duplicated because 0=> Empty grid) digits exist
@@ -85,14 +85,14 @@ class Solver:
             column = self.puzzle[:, i]  # The i-th column
 
             # If the row or columns has any duplicates other than 0
-            if self.__has_duplicacy(row) or self.__has_duplicacy(column):
+            if self.__has_duplicates(row) or self.__has_duplicates(column):
                 return False
 
         # Checking the 3x3 blocks for duplicates
         for i in range(3):
             for j in range(3):
                 block = self.puzzle[i * 3:(i + 1) * 3, j * 3:(j + 1) * 3]
-                if self.__has_duplicacy(block):
+                if self.__has_duplicates(block):
                     return False
         return True
 

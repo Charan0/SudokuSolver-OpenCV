@@ -1,5 +1,5 @@
 from Sudoku_CV import *
-# from Solver import Solver
+from Solver import Solver
 
 capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
@@ -31,38 +31,38 @@ def parse_and_solve(image: np.ndarray):
     # cv2.imshow('Warped', warped_image)  # Localized image of the grid
 
     locations, dst, grid = locate_and_predict(warped_image)
-    # solver = Solver(grid.copy())  # Initialising the sudoku solver
-    # solved_grid = solver.solve()  # Solving the puzzle
+    solver = Solver(grid.copy())  # Initialising the sudoku solver
+    solved_grid = solver.solve()  # Solving the puzzle
+
+    mask = grid.astype('bool')  # The original grid `unsolved-sudoku` will be used as the mask
+
+    # init_grid = np.array([
+    #     [4, 0, 1, 2, 9, 0, 0, 7, 5],
+    #     [2, 0, 0, 3, 0, 0, 8, 0, 0],
+    #     [0, 7, 0, 0, 8, 0, 0, 0, 6],
+    #     [0, 0, 0, 1, 0, 3, 0, 6, 2],
+    #     [1, 0, 5, 0, 0, 0, 4, 0, 3],
+    #     [7, 3, 0, 6, 0, 8, 0, 0, 0],
+    #     [6, 0, 0, 0, 2, 0, 0, 3, 0],
+    #     [0, 0, 7, 0, 0, 1, 0, 0, 4],
+    #     [8, 9, 0, 0, 6, 5, 1, 0, 7]
+    # ])
     #
-    # mask = grid.astype('bool')  # The original grid `unsolved-sudoku` will be used as the mask
-
-    init_grid = np.array([
-        [4, 0, 1, 2, 9, 0, 0, 7, 5],
-        [2, 0, 0, 3, 0, 0, 8, 0, 0],
-        [0, 7, 0, 0, 8, 0, 0, 0, 6],
-        [0, 0, 0, 1, 0, 3, 0, 6, 2],
-        [1, 0, 5, 0, 0, 0, 4, 0, 3],
-        [7, 3, 0, 6, 0, 8, 0, 0, 0],
-        [6, 0, 0, 0, 2, 0, 0, 3, 0],
-        [0, 0, 7, 0, 0, 1, 0, 0, 4],
-        [8, 9, 0, 0, 6, 5, 1, 0, 7]
-    ])
-
-    solved_grid = np.array(
-        [[4, 8, 1, 2, 9, 6, 3, 7, 5],
-         [2, 5, 6, 3, 1, 7, 8, 4, 9],
-         [3, 7, 9, 5, 8, 4, 2, 1, 6],
-         [9, 4, 8, 1, 5, 3, 7, 6, 2],
-         [1, 6, 5, 9, 7, 2, 4, 8, 3],
-         [7, 3, 2, 6, 4, 8, 9, 5, 1],
-         [6, 1, 4, 7, 2, 9, 5, 3, 8],
-         [5, 2, 7, 8, 3, 1, 6, 9, 4],
-         [8, 9, 3, 4, 6, 5, 1, 2, 7]]
-    )
+    # solved_grid = np.array(
+    #     [[4, 8, 1, 2, 9, 6, 3, 7, 5],
+    #      [2, 5, 6, 3, 1, 7, 8, 4, 9],
+    #      [3, 7, 9, 5, 8, 4, 2, 1, 6],
+    #      [9, 4, 8, 1, 5, 3, 7, 6, 2],
+    #      [1, 6, 5, 9, 7, 2, 4, 8, 3],
+    #      [7, 3, 2, 6, 4, 8, 9, 5, 1],
+    #      [6, 1, 4, 7, 2, 9, 5, 3, 8],
+    #      [5, 2, 7, 8, 3, 1, 6, 9, 4],
+    #      [8, 9, 3, 4, 6, 5, 1, 2, 7]]
+    # )
     # cv2.imshow('WarpedImage', warped_image)
-    written_image = write_on_image(warped_image, locations, solved_grid, init_grid.astype('bool'))
+    solved_warp = write_on_image(warped_image, locations, solved_grid, mask)
     # cv2.imshow('WrittenImage', written_image)
-    solved_sudoku_image, inverse_warp = warp_and_stitch(image, written_image, matrix)
+    solved_sudoku_image, inverse_warp = warp_and_stitch(image, solved_warp, matrix)
     # cv2.imshow('InverseWarp', inverse_warp)
 
     return solved_sudoku_image
