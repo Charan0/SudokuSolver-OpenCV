@@ -141,7 +141,7 @@ In a similar way we extract digits from each of the boxes and reject(Fill with 0
 
 <img src='Models/base_model.png'>
 
-##### I've actually trained two models of the same architecture but one uses Tensorflow's ImageDataGenerator to send in the data and to another model I've sent data manually using pathlib. I observed that the latter performed better than the former even when both tht models have the same architecture. It will be helpful if someone could point out why there is such a difference in performance.
+#### I've actually trained two models of the same architecture but one uses Tensorflow's ImageDataGenerator to send in the data and to another model I've sent data manually using pathlib. I observed that the latter performed better than the former even when both tht models have the same architecture. It will be helpful if someone could point out why there is such a difference in performance.
 
 ### Unsolved Grid (Identified Grid)
 
