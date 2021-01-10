@@ -55,16 +55,30 @@ We then find out all the contours in the image using OpenCV's `findContours()` m
                  
 ## Largest contour and localizing the puzzle
 
+<div>
+<p align="middle">
+  <img src='Samples/LargestContour.png' width=450 height=550">
+</p>
+<p align="middle">
+So we now pick the contour with the largest area in other words this contour is the one that contains only the sudoku puzzle grid.
+</p>
+</div>
+
+<div>
+<p align="middle">
+  <img src='Samples/Image-Corners.png' width=450 height=550">
+</p>
+<p align="middle">
+Now that we have found the contour enclosing the sudoku puzzle, the next task is to localize only the puzzle from the camera input. Just extracting the ROI is fine but in many cases the orientation of the puzzle isn't guaranteed to be straight(I very well might hold the paper in an inclined manner and even then we would want our program to solve the puzzle). So now we begin with identifying the four corners that enclose the sudoku grid or in other terms the points that form the contour (square or most prolly a rectangle)
+</p>
+</div>
 
 
 <div>
-<p align="left" width=30%>
-  <img src='Samples/LargestContour.png' width=450 height=550">
-</p>
-<p align="right" width=30%>
+<p align="middle">
   <img src='Samples/LocalizedSudoku(WarpPerspective).png'>
 </p>
 <p align="middle">
-Hello there
+Now that we have the points that enclose this contour we use OpenCV's `getPerspectiveTransform()` `warpPerspective()` to warp and isolate the sudoku grid from rest of the image.
 </p>
 </div>
