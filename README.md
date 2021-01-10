@@ -146,3 +146,6 @@ In a similar way we extract digits from each of the boxes and reject(Fill with 0
 
 ## The Solved image
 <img src='Samples/Solved.png'>
+
+## The Final Solution
+<img src='Samples/FinalOutput.png'>
