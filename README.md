@@ -130,6 +130,12 @@ In a similar way we extract digits from each of the boxes and reject(Fill with 0
 
 # C) Solving the identified sudoku puzzle.
 
+## The Convolutional Neural Network
+
+<img src='Models/base_model.png'>
+
+##### I've actually trained two models of the same architecture but one uses Tensorflow's ImageDataGenerator to send in the data and to another model I've sent data manually using pathlib. I observed that the latter performed better than the former even when both tht models have the same architecture. It will be helpful if someone could point out why there is such a difference in performance.
+
 ### Unsolved Grid (Identified Grid)
 
 <img src='Samples/Identified-grid.PNG'>
@@ -149,3 +155,14 @@ In a similar way we extract digits from each of the boxes and reject(Fill with 0
 
 ## The Final Solution
 <img src='Samples/FinalOutput.png'>
+
+
+# Additional references and resources used : 
+
+### <a href="https://stackoverflow.com/questions/63583351/how-getperspectivetransform-and-warpperspective-work-python">How <code>warpPerspective()</code> works?</a>
+### <a href="https://www.youtube.com/watch?v=hMIrQdX4BkE">What are connected components and how to extract them.</a>
+### <a href="https://stackoverflow.com/questions/52737584/contour-identification-using-opencv">How contours are identified and extracted.</a>
+### A book on OpenCV for Computer Vision by Wiley (Will update as soon as I identify the correct source)
+### Inspired from : <a href="https://www.youtube.com/watch?v=uUtw6Syic6A">Real Time Sudoku Solver.</a>
+### Insights into some functionalities of OpenCV : <a href="https://www.pyimagesearch.com/">PyImageSearch.</a>
+### <a href="https://www.youtube.com/watch?v=x-HH0kwbO-4">Official Tensorflow video on AR Sudoku Solver.</a>
