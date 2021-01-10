@@ -1,6 +1,13 @@
 # SudokuSolver-OpenCV
 A realtime sudoku solver built using Python, Keras and OpenCV
 
+# How to run
+
+* Clone the repo locally.
+* Create a virtual environment and run `pip install -r requirements.txt`
+* Open terminal and navigate to the directory and run `python main.py`
+* Have Fun!
+
 # How it works?
 
 ## Broadly there are 4 steps involved in this
