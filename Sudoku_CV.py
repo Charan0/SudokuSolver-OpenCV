@@ -3,12 +3,13 @@ import numpy as np  # `Numpy` for arrays and fast operations over those arrays
 from typing import Union, List  # Used for type checking
 from scipy.ndimage.measurements import center_of_mass  # Used to centralize a particular part in the image
 from tensorflow.keras import models  # `Tensorflow` for loading NeuralNetwork model
+from Solver import Solver
 
 model = models.load_model('Models/img_model')  # Loading the pre-trained model
 
 
 def morph_image(image: np.ndarray, perform_blur: bool = True, perform_threshold: bool = True, thresh_type: int = 0,
-                dilate: bool = False, erode: bool = False, show_result: bool = False, c: int = 2) -> np.ndarray:
+                dilate: bool = False, erode: bool = False, save_result: bool = False, c: int = 2) -> np.ndarray:
     """
     :param image: Input image to morph
     :param perform_blur: Boolean that specifies whether or not to perform blurring
@@ -16,7 +17,7 @@ def morph_image(image: np.ndarray, perform_blur: bool = True, perform_threshold:
     :param thresh_type: integer that specifies the type of thresholding
     :param dilate: Boolean that specifies whether or not to perform dilation
     :param erode: Boolean that specifies whether or not to perform erosion
-    :param show_result: Boolean that specifies whether or not to show the output of the function
+    :param save_result: Boolean that specifies whether or not to show the output of the function
     :param c: integer used as a parameter in adaptive thresholding
     :return: Morphed image of the input
     """
@@ -37,15 +38,30 @@ def morph_image(image: np.ndarray, perform_blur: bool = True, perform_threshold:
         dst = cv2.dilate(dst, kernel, iterations=1)
     if erode:
         dst = cv2.erode(dst, kernel, iterations=1)
-    if show_result:
-        cv2.imshow('Image-Morphed', dst)
+    if save_result:
+        cv2.imwrite('Image-Morphed.png', dst)
     return dst
 
 
-def get_largest_contour(image: np.ndarray, show_result: bool = False) -> np.ndarray:
+def resize(src_image: np.ndarray, dest_width: int, dest_height: int, keep_ratio: bool = True):
+    if dest_width <= 0 or dest_height <= 0:  # If encountered invalid values
+        print('Invalid arguments provided')
+        return src_image
+    if not keep_ratio:  # If we do not want to preserve the aspect ratio
+        resized_image = cv2.resize(src_image, (dest_height, dest_width))
+        return resized_image
+    else:
+        width, height, _ = src_image.shape[:-1]  # Original width and height
+        aspect_ratio = width / height  # Calculating the aspect ratio
+        calculated_height = int(width / aspect_ratio)  # New height based on the aspect_ratio
+        resized_image = cv2.resize(src_image, (calculated_height, dest_width))
+        return resized_image
+
+
+def get_largest_contour(image: np.ndarray, save_result: bool = False) -> np.ndarray:
     """
     :param image: Input image to find the largest contour
-    :param show_result: Boolean to specify whether or not to show the output image
+    :param save_result: Boolean to specify whether or not to show the output image
     :return: Returns the points in the largest contour found in the image
     """
     if image.ndim == 3:
@@ -54,20 +70,20 @@ def get_largest_contour(image: np.ndarray, show_result: bool = False) -> np.ndar
         dst = image.copy()
     contours, _ = cv2.findContours(dst, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     outlines = max(contours, key=cv2.contourArea)
-    if show_result:
+    if save_result:
         image_with_contours = cv2.drawContours(image, [outlines], -1, (0, 255, 50), 3)
-        cv2.imshow('Image-Contoured', image_with_contours)
+        cv2.imwrite('Image-Contoured.png', image_with_contours)
     return outlines
 
 
-def find_corners(outline: np.ndarray, image: np.ndarray = None, show_result: bool = False) -> Union[np.ndarray, None]:
+def find_corners(outline: np.ndarray, image: np.ndarray = None, save_result: bool = False) -> Union[np.ndarray, None]:
     """
     :param outline: A set of outline/contour points
     :param image: Input image
-    :param show_result: Boolean that specifies whether or not to show the output
+    :param save_result: Boolean that specifies whether or not to show the output
     :return: Finds the 4 corners of the polygon
     """
-    if show_result and image is None:
+    if save_result and image is None:
         # print('To show results the image should not be none.')
         return None
     corners = np.zeros((4, 2), dtype='int32')
@@ -78,11 +94,11 @@ def find_corners(outline: np.ndarray, image: np.ndarray = None, show_result: boo
     corners[1] = outline[np.argmin(diff_points)]
     corners[2] = outline[np.argmax(added_points)]
     corners[3] = outline[np.argmax(diff_points)]
-    if show_result:
+    if save_result:
         dst = image.copy()
         for i in range(4):
             cv2.circle(dst, tuple(corners[i].tolist()), 4, (0, 255, 0), -1)
-        cv2.imshow('Image-Corners', dst)
+        cv2.imwrite('Image-Corners.png', dst)
     return corners
 
 
@@ -132,7 +148,7 @@ def get_dimensions(corners: np.ndarray, tolerance=1e+5, rel_tol=1e-4):
 
 
 def warp_image(image: np.ndarray, width: int, height: int, old_points: np.ndarray, new_points: np.ndarray,
-               show_result: bool = False):
+               save_result: bool = False):
     """
     Performs standard image warping, used to extract and localize only the
     sudoku puzzle from the camera input
@@ -141,7 +157,7 @@ def warp_image(image: np.ndarray, width: int, height: int, old_points: np.ndarra
     :param height: The desired output height
     :param old_points: The locations of the sudoku puzzle
     :param new_points: The new points to which the localized puzzle will be mapped to
-    :param show_result: A boolean when set to True displays the warped image
+    :param save_result: A boolean when set to True displays the warped image
     :return: Returns the warped image
     """
     if 'float' not in str(old_points.dtype):
@@ -151,8 +167,8 @@ def warp_image(image: np.ndarray, width: int, height: int, old_points: np.ndarra
 
     matrix = cv2.getPerspectiveTransform(old_points, new_points)
     dst = cv2.warpPerspective(image, matrix, (width, height))
-    if show_result:
-        cv2.imshow('Image-Warped', dst)
+    if save_result:
+        cv2.imwrite('Image-Warped.png', dst)
     return dst, matrix
 
 
@@ -283,9 +299,9 @@ def write_on_image(image: np.ndarray, locations: List, strings: np.ndarray, mask
 
     font = cv2.FONT_HERSHEY_COMPLEX  # The font-face being used
     height, width, _ = image.shape
-    factor = min(height / width, width / height)  # Factor to be multiplied by the base size of the font
+    factor = max(height / width, width / height)  # Factor to be multiplied by the base size of the font
 
-    font_scale = 0.95 * factor
+    font_scale = 1.25 * factor
 
     for (_, x), (y, _) in locations:  # Coordinates of the bottom left corner of the box
         if not mask[index]:  # If the box in empty in the 'Unsolved' Sudoku
@@ -318,19 +334,3 @@ def warp_and_stitch(original_image: np.ndarray, warped_image: np.ndarray, matrix
         inverse_warped
     )
     return stitched, inverse_warped
-
-
-if __name__ == '__main__':
-    img = cv2.imread('C:\\Users\\user\\Downloads\\Sudoku.jpg')
-
-    edges = get_largest_contour(img, False)
-    edge_corners = find_corners(edges, img, False)
-    w = h = 540
-    new_locations = np.array([[0, 0], [w, 0], [w, h], [0, h]], dtype='float32')
-    new_image = warp_image(img, w, h, edge_corners, new_locations, False)
-    # image_for_prediction = morph_image(new_image, dilate=False)
-    # locs = locate_digits(new_image)
-
-    cv2.imshow('New-Image', new_image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
