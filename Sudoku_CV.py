@@ -43,7 +43,7 @@ def morph_image(image: np.ndarray, perform_blur: bool = True, perform_threshold:
     return dst
 
 
-def resize(src_image: np.ndarray, dest_width: int, dest_height: int, keep_ratio: bool = True):
+def resize(src_image: np.ndarray, dest_width: int, dest_height: int = None, keep_ratio: bool = True):
     if dest_width <= 0 or dest_height <= 0:  # If encountered invalid values
         print('Invalid arguments provided')
         return src_image
@@ -51,10 +51,10 @@ def resize(src_image: np.ndarray, dest_width: int, dest_height: int, keep_ratio:
         resized_image = cv2.resize(src_image, (dest_height, dest_width))
         return resized_image
     else:
-        width, height, _ = src_image.shape[:-1]  # Original width and height
+        height, width, _ = src_image.shape  # Original width and height
         aspect_ratio = width / height  # Calculating the aspect ratio
-        calculated_height = int(width / aspect_ratio)  # New height based on the aspect_ratio
-        resized_image = cv2.resize(src_image, (calculated_height, dest_width))
+        calculated_height = int(dest_width / aspect_ratio)  # New height based on the aspect_ratio
+        resized_image = cv2.resize(src_image, (dest_width, calculated_height))
         return resized_image
 
 
@@ -274,7 +274,7 @@ def locate_and_predict(warped_image: np.ndarray):
                 grid[i, j] = make_prediction(preprocessed)  # BottleNeck for performance (Too Slow?)
                 count += 1
     # print(f'Identified a total of {count} digits in the sudoku grid')
-    return locations, dst, grid
+    return locations, grid
 
 
 def write_on_image(image: np.ndarray, locations: List, strings: np.ndarray, mask: np.ndarray):

@@ -45,7 +45,7 @@ def parse_and_solve(image: np.ndarray, is_video=True, save_result: bool = False)
     warped_image, matrix = warp_image(image.copy(), int(width), int(height), corners, new, save_result)
     # cv2.imshow('Warped', warped_image)  # Localized image of the grid
 
-    locations, dst, grid = locate_and_predict(warped_image, )
+    locations, grid = locate_and_predict(warped_image)
     solver = Solver(grid.copy())  # Initialising the sudoku solver
     solved_grid = solver.solve()  # Solving the puzzle
 
@@ -64,13 +64,13 @@ def parse_and_solve(image: np.ndarray, is_video=True, save_result: bool = False)
 
 
 def solve_sudoku(from_video: bool, input_image: np.ndarray = None, save_result: bool = False):
-    capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     def set_resolution(width, height):
         capture.set(3, width)
         capture.set(4, height)
 
     if from_video:
+        capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         set_resolution(1280, 720)
         while True:  # Capturing the input from the camera
             ret_val, frame = capture.read()
@@ -90,24 +90,32 @@ def solve_sudoku(from_video: bool, input_image: np.ndarray = None, save_result: 
 
 
 if __name__ == '__main__':
-    print(args)
     if args.camera:  # If input from the webcam
         solve_sudoku(from_video=True)
     elif args.file:  # Send an image as the input
         if args.input is None:
             parser.error('--file requires --input')
         else:
-            image_loc = Path(args.input)
-            if not image_loc.exists():
+            image_loc = Path(args.input)  # Getting the path of the input image
+            if not image_loc.exists():  # If the file does not exist
                 print('The image path does not exist')
                 exit(-1)
-            src_image = cv2.imread(str(image_loc), cv2.IMREAD_UNCHANGED)
-            if args.visualize:
-                solved_sudoku = solve_sudoku(False, src_image, save_result=True)
+            src_image = cv2.imread(str(image_loc), cv2.IMREAD_UNCHANGED)  # Loading in the image
+            src_width, src_height = src_image.shape[:-1]  # The original dimensions of the image
+            if src_width >= 1000 or src_height >= 1000:  # If the image it too large resize it
+                print('Image dimensions too large to work with')
+                dst = resize(src_image.copy(), 650, True)  # Resize with output width set to 650
+                print(f'Image resized to {dst.shape}')
+                dst = cv2.bilateralFilter(dst, 15, 95, 95)  # Bilateral filtering to remove noise from the resized image
             else:
-                solved_sudoku = solve_sudoku(False, src_image)
-            if args.save:
-                cv2.imwrite('Output_image.png', solved_sudoku)
-            cv2.imshow('Solved', solved_sudoku)
+                dst = src_image.copy()
+            if args.visualize:  # If visualize is set to true
+                # Store all the intermediate images
+                solved_sudoku = solve_sudoku(False, dst, save_result=True)
+            else:  # If visualize is not set
+                solved_sudoku = solve_sudoku(False, dst)
+            if args.save:  # If `save` is set to True
+                cv2.imwrite('Output_image.png', solved_sudoku)  # Saving the output image
+            cv2.imshow('Solved', solved_sudoku)  # Displaying the output image
             cv2.waitKey(0)
             cv2.destroyAllWindows()
