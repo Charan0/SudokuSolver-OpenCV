@@ -5,7 +5,9 @@ A realtime sudoku solver built using Python, Keras and OpenCV
 
 * Clone the repo locally.
 * Create a virtual environment and run `pip install -r requirements.txt`
-* Open terminal and navigate to the directory and run `python main.py`
+* To solve a sudoku image which you might have locally run `python main.py --file -i "path to image" `
+* To use camera feed as the input run `python main.py --camera`
+* For additional help run `python main.py --help`
 * Have Fun!
 
 # How it works?
